@@ -1,0 +1,6 @@
+/vendor/
+/coverage/
+/tmp/
+.idea/
+*.cache
+junit.xml

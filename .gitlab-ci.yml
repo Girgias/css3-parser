@@ -1,0 +1,50 @@
+default:
+  interruptible: true
+  before_script:
+    # Install some dependencies that the php image doesn't have installed
+    - apk update -q
+    - apk add -q git composer oniguruma-dev libxml2-dev libzip-dev pcre-dev
+    ## Install Xdebug
+    - apk add --no-cache $PHPIZE_DEPS && pecl install xdebug && docker-php-ext-enable xdebug
+
+stages:
+  - test
+
+.tests:
+  stage: test
+  # Select what we should cache between builds
+  cache:
+    key: "dev-dependencies"
+    policy: pull-push
+    paths:
+      - vendor/
+  coverage: /^\s*Lines:\s*\d+.\d+\%/
+  artifacts:
+    expire_in: 1 days
+    reports:
+      junit: junit.xml
+
+php7.4-tests:
+  extends: .tests
+  # image: thecodingmachine/php:7.4-cli
+  image: php:7.4.0-cli-alpine
+  variables:
+    # To enable (or disable) PHP extension use PHP_EXTENSION_NAME variable
+    #PHP_EXTENSION_XDEBUG: 1
+  script:
+    # Run composer
+    - composer install
+    - composer ci
+
+php-master-tests:
+  extends: .tests
+  image: phpdaily/php:8.0.0-dev-cli-alpine
+  allow_failure: true
+  script:
+    # Run composer and ignore platform requirements so that it can install on PHP 8.0.0-dev
+    - composer install --ignore-platform-reqs
+    # Ignore syntax check as PHP_CS_FIXER dies on version it hasn't been verified on.
+    # Psalm also dies so ignore static analysis
+    # composer static-analysis
+    - composer code-coverage
+    - composer memory-test
