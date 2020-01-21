@@ -2,6 +2,7 @@
 
 [![pipeline status](https://gitlab.com/Girgias/php-css3-parser/badges/master/pipeline.svg)](https://gitlab.com/Girgias/php-css3-parser/commits/master)
 [![coverage report](https://gitlab.com/Girgias/php-css3-parser/badges/master/coverage.svg)](https://gitlab.com/Girgias/php-css3-parser/commits/master)
+[![Codeac.io report](https://static.codeac.io/badges/3-15605407.svg "Codeac.io")](https://app.codeac.io/gitlab/Girgias/php-css3-parser)
 
 A CSS 3 Lexer and Parser written in PHP following the CSS Syntax Module Level 3
 W3C Candidate Recommendation specification, revision 2019-07-16
