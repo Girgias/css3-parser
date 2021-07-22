@@ -32,8 +32,12 @@ use Girgias\CSSParser\CompleteLexer;
 use Girgias\CSSParser\Lexer;
 use Girgias\CSSParser\SpecificationCompliantInputStream;
 use Girgias\CSSParser\SpecificationCompliantLexer;
+use Girgias\CSSParser\Tokens\Delimiter;
 use Girgias\CSSParser\Tokens\EOF;
 use Girgias\CSSParser\Tokens\Identifier;
+use Girgias\CSSParser\Tokens\LeftSquareBracket;
+use Girgias\CSSParser\Tokens\RightSquareBracket;
+use Girgias\CSSParser\Tokens\TString;
 use Girgias\CSSParser\Tokens\Whitespace;
 use PHPUnit\Framework\TestCase;
 
@@ -78,6 +82,16 @@ final class SpecificationCompliantLexerTest extends TestCase
         $identifier = $lexer->readNext();
         self::assertInstanceOf(Identifier::class, $identifier);
         self::assertSame('identifier', $identifier->getValue());
+    }
+
+    public function testCommentRemovalWhenForwardSlashIsPresentAndCommentIsNotPresent(): void
+    {
+        $lexer = $this->getLexer('[href="http://www"]');
+        self::assertInstanceOf(LeftSquareBracket::class, $lexer->readNext());
+        self::assertInstanceOf(Identifier::class, $lexer->readNext());
+        self::assertInstanceOf(Delimiter::class, $lexer->readNext());
+        self::assertInstanceOf(TString::class, $lexer->readNext());
+        self::assertInstanceOf(RightSquareBracket::class, $lexer->readNext());
     }
 
     private function getLexer(string $input): Lexer

@@ -67,7 +67,8 @@ final class SpecificationCompliantInputStream implements InputStream
         $input = \str_replace("\u{0000}", Definitions::REPLACEMENT_CHARACTER, $input);
         $input = self::removeSurrogateCodePoints($input);
 
-        $this->stream = self::splitInputIntoCodePoints($input);
+        /** @psalm-suppress MixedPropertyTypeCoercion */
+        $this->stream = \mb_str_split($input);
     }
 
     /**
@@ -110,15 +111,5 @@ final class SpecificationCompliantInputStream implements InputStream
     private static function removeSurrogateCodePoints(string $input): string
     {
         return \preg_replace(self::IS_SURROGATES_CODE_POINTS, Definitions::REPLACEMENT_CHARACTER, $input);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private static function splitInputIntoCodePoints(string $input): array
-    {
-        return \array_map(static function ($iterator) use ($input): string {
-            return \mb_substr($input, $iterator, 1);
-        }, \range(0, (\mb_strlen($input) - 1)));
     }
 }

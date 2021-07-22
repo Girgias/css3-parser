@@ -140,15 +140,18 @@ final class CompleteLexer implements Lexer
          * Consume code point as per the specification.
          */
         $currentCodePoint = $this->inputStream->next();
+
         switch ($currentCodePoint) {
             case self::REVERSE_SOLIDUS:
                 // This is a parse error as it means there is no valid escape sequence after the REVERSE SOLIDUS
                 $this->inputStream->error('Bad escape sequence');
 
                 return new Delimiter($currentCodePoint);
+
             case self::QUOTATION_MARK:
             case self::APOSTROPHE:
                 return $this->consumeString($currentCodePoint);
+
             case self::NUMBER_SIGN:
                 $nextCodePoint = $this->inputStream->peek();
                 $secondNextCodePoint = $this->inputStream->peek(1);
@@ -171,24 +174,34 @@ final class CompleteLexer implements Lexer
                 }
 
                 return new Delimiter($currentCodePoint);
+
             case self::COMMA:
                 return new Comma();
+
             case self::COLON:
                 return new Colon();
+
             case self::SEMI_COLON:
                 return new Semicolon();
+
             case self::LEFT_PARENTHESIS:
                 return new LeftParenthesis();
+
             case self::RIGHT_PARENTHESIS:
                 return new RightParenthesis();
+
             case self::LEFT_CURLY_BRACKET:
                 return new LeftCurlyBracket();
+
             case self::RIGHT_CURLY_BRACKET:
                 return new RightCurlyBracket();
+
             case self::LEFT_SQUARE_BRACKET:
                 return new LeftSquareBracket();
+
             case self::RIGHT_SQUARE_BRACKET:
                 return new RightSquareBracket();
+
             case self::LESS_THAN_SIGN:
                 if (
                     $this->inputStream->peek() === self::EXCLAMATION_MARK
@@ -203,6 +216,7 @@ final class CompleteLexer implements Lexer
                 }
 
                 return new Delimiter($currentCodePoint);
+
             case self::HYPHEN_MINUS:
                 if (
                     $this->inputStream->peek() === self::HYPHEN_MINUS
@@ -215,6 +229,7 @@ final class CompleteLexer implements Lexer
                 }
 
                 return new Delimiter($currentCodePoint);
+
             case self::COMMERCIAL_AT:
                 if ($this->is3CodePointCheckStartIdentifier()) {
                     // Create an <at-keyword-token> with its value set to the returned value, and return it.
@@ -222,6 +237,7 @@ final class CompleteLexer implements Lexer
                 }
 
                 return new Delimiter($currentCodePoint);
+
             default:
                 return new Delimiter($currentCodePoint);
         }
@@ -262,6 +278,8 @@ final class CompleteLexer implements Lexer
                 && $this->inputStream->peek(1) === self::ASTERISK
             ) {
                 $this->consumeCommentToken();
+            } else {
+                $this->inputStream->next();
             }
         } while (!$this->inputStream->isEndOfStream());
 

@@ -37,9 +37,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class InputStreamTest extends TestCase
 {
-    /**
-     * @covers \Girgias\CSSParser\SpecificationCompliantInputStream::splitInputIntoCodePoints
-     */
     public function testPreprocessing(): void
     {
         // Normal string
